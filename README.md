@@ -9,8 +9,8 @@ Docs for each script can be found it its directory.
 sh ./install.sh
 ```
 
-# Bin
-Installing will write the scripts to `bin/`
+# Build
+Installing will write the scripts to `build/`
 
 # Goals
 The goal with this repository is to have better documentation, readability, and functionality than the [old repository](https://github.com/jakeroggenbuck/.scripts).
