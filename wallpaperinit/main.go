@@ -3,16 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
 	"os/exec"
-	"time"
 )
 
 func pick_random(dirname string) string {
-	files, err := ioutil.ReadDir(dirname + "/.config/wallpaper/walls/")
+	files, err := os.ReadDir(dirname + "/.config/wallpaper/walls/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +32,7 @@ func write_current(dirname string, filename string) {
 func set_wallpaper(dirname string) {
 	current := dirname + "/.config/wallpaper/current"
 
-	content, err := ioutil.ReadFile(current)
+	content, err := os.ReadFile(current)
 	if err != nil {
 		fmt.Println("Err")
 	}
@@ -46,8 +44,6 @@ func set_wallpaper(dirname string) {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -56,6 +52,7 @@ func main() {
 	randomPtr := flag.Bool("random", false, "Random Wallpaper")
 	setPtr := flag.Bool("set", false, "Set Wallpaper")
 	verbosePtr := flag.Bool("verbose", false, "Verbose")
+	givenFile := flag.String("filename", "", "filename")
 	flag.Parse()
 
 	if *randomPtr {
@@ -63,8 +60,19 @@ func main() {
 		write_current(dirname, filename)
 
 		if *verbosePtr {
-			fmt.Printf("Set '%s' as wallpaper\n", filename)
+			fmt.Printf("Set '%s' as wallpaper.\n", filename)
 		}
+	} else if len(*givenFile) > 0 {
+		if _, err := os.Stat(*givenFile); os.IsNotExist(err) {
+			write_current(dirname, *givenFile)
+
+			if *verbosePtr {
+				fmt.Printf("Set '%s' as wallpaper.\n", *givenFile)
+			}
+		} else {
+			fmt.Printf("File '%s' does not exist.\n", *givenFile)
+		}
+
 	}
 
 	if *setPtr {
